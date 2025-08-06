@@ -1,0 +1,341 @@
+// Production Prisma Schema - Job Portal Platform
+// Complete schema with authentication, favorites, email notifications
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User authentication and management
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  name              String?
+  password          String?
+  image             String?
+  emailVerified     DateTime?
+  isAdmin           Boolean  @default(false)
+  lastLoginAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  favoriteJobs      FavoriteJob[]
+  favoriteCompanies FavoriteCompany[]
+  jobApplications   JobApplication[]
+  emailPreferences  EmailPreferences?
+  userActivities    UserActivity[]
+  jobViews          JobView[]
+  
+  @@map("users")
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+// Company model with comprehensive data
+model Company {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  slug          String   @unique
+  logoUrl       String?
+  careerPageUrl String?
+  websiteUrl    String?
+  description   String?  @db.Text
+  sector        String
+  country       String
+  headquarters  String?
+  employeeCount String?  // "1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"
+  foundedYear   Int?
+  isActive      Boolean  @default(true)
+  featured      Boolean  @default(false)
+  trending      Boolean  @default(false)
+  
+  // Additional company data
+  techStack     Json?    // Array of technologies
+  benefits      Json?    // Array of benefits
+  culture       String?  @db.Text
+  locations     Json?    // Array of office locations
+  
+  // Relations
+  jobs          Job[]
+  favoriteCompanies FavoriteCompany[]
+  scrapeLogs    ScrapeLog[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([sector])
+  @@index([country])
+  @@index([featured])
+  @@index([trending])
+  @@map("companies")
+}
+
+// Enhanced Job model
+model Job {
+  id              String   @id @default(cuid())
+  title           String
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyName     String   // Denormalized for performance
+  location        String
+  locationType    String?  // Remote, Hybrid, On-site
+  category        String   // Engineering, Product, Design, etc.
+  level           String?  // Entry, Mid, Senior, Lead, Principal
+  employmentType  String?  // Full-time, Part-time, Contract, Intern
+  
+  // Compensation
+  salaryMin       Int?
+  salaryMax       Int?
+  salaryCurrency  String   @default("USD")
+  
+  // Job details
+  description     String   @db.Text
+  requirements    String?  @db.Text
+  responsibilities String? @db.Text
+  benefits        Json?    // Array of benefits
+  skills          Json?    // Array of required skills
+  
+  // Application info
+  applicationUrl  String
+  applicationEmail String?
+  applicationDeadline DateTime?
+  
+  // Metadata
+  originalUrl     String?  // URL where job was scraped
+  externalId      String?  // External job ID from scraper
+  postedDate      DateTime
+  isActive        Boolean  @default(true)
+  featured        Boolean  @default(false)
+  urgent          Boolean  @default(false)
+  remote          Boolean  @default(false)
+  
+  // Relations
+  favoriteJobs    FavoriteJob[]
+  jobApplications JobApplication[]
+  jobViews        JobView[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([companyId])
+  @@index([location])
+  @@index([category])
+  @@index([level])
+  @@index([employmentType])
+  @@index([postedDate])
+  @@index([isActive])
+  @@index([featured])
+  @@index([remote])
+  @@map("jobs")
+}
+
+// User favorites
+model FavoriteJob {
+  id        String   @id @default(cuid())
+  userId    String
+  jobId     String
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+  @@map("favorite_jobs")
+}
+
+model FavoriteCompany {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  createdAt DateTime @default(now())
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, companyId])
+  @@map("favorite_companies")
+}
+
+// Job applications tracking
+model JobApplication {
+  id          String   @id @default(cuid())
+  userId      String
+  jobId       String
+  status      String   @default("applied") // applied, reviewing, interviewed, offered, rejected
+  appliedAt   DateTime @default(now())
+  notes       String?  @db.Text
+  resumeUrl   String?
+  coverLetter String?  @db.Text
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+  @@map("job_applications")
+}
+
+// Email preferences for notifications
+model EmailPreferences {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  newJobsFromFavorites  Boolean  @default(true)
+  weeklyJobSummary      Boolean  @default(true)
+  companyUpdates        Boolean  @default(true)
+  jobApplicationStatus  Boolean  @default(true)
+  marketInsights        Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("email_preferences")
+}
+
+// Email notification queue
+model EmailQueue {
+  id          String   @id @default(cuid())
+  to          String
+  subject     String
+  body        String   @db.Text
+  template    String?  // Template name
+  variables   Json?    // Template variables
+  status      String   @default("pending") // pending, sent, failed
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(3)
+  scheduledAt DateTime @default(now())
+  sentAt      DateTime?
+  errorMessage String?
+  createdAt   DateTime @default(now())
+  
+  @@index([status])
+  @@index([scheduledAt])
+  @@map("email_queue")
+}
+
+// Scraping logs and monitoring
+model ScrapeLog {
+  id            String   @id @default(cuid())
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  status        String   // success, failed, partial
+  jobsFound     Int      @default(0)
+  jobsProcessed Int      @default(0)
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  errorMessage  String?  @db.Text
+  metadata      Json?    // Additional scraping metadata
+  
+  @@index([companyId])
+  @@index([status])
+  @@index([startedAt])
+  @@map("scrape_logs")
+}
+
+// Analytics and insights
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  userId    String?
+  ipAddress String?
+  userAgent String?
+  referer   String?
+  timestamp DateTime @default(now())
+  
+  @@index([path])
+  @@index([timestamp])
+  @@map("page_views")
+}
+
+model SearchQuery {
+  id        String   @id @default(cuid())
+  query     String
+  filters   Json?    // Search filters applied
+  results   Int      @default(0)
+  userId    String?
+  timestamp DateTime @default(now())
+  
+  @@index([timestamp])
+  @@map("search_queries")
+}
+
+// Job views tracking
+model JobView {
+  id        String   @id @default(cuid())
+  userId    String?
+  jobId     String
+  ipAddress String?
+  userAgent String?
+  viewedAt  DateTime @default(now())
+  
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([jobId])
+  @@index([viewedAt])
+  @@map("job_views")
+}
+
+// User activity tracking for analytics and admin dashboard
+model UserActivity {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String   // login, register, favorite_company, job_view, job_apply, etc.
+  entityType String?  // job, company, user
+  entityId   String?
+  metadata   Json?    // Additional action metadata
+  createdAt  DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("user_activities")
+}

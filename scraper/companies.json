@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Google",
+    "career_url": "https://careers.google.com/jobs/results/",
+    "base_url": "https://careers.google.com",
+    "selectors": {
+      "job_container": ".gc-card",
+      "title": "h3",
+      "location": ".gc-job-tags span",
+      "description": ".gc-job-snippet"
+    },
+    "rate_limit": 2.0
+  },
+  {
+    "name": "Microsoft",
+    "career_url": "https://careers.microsoft.com/us/en/search-results",
+    "base_url": "https://careers.microsoft.com",
+    "selectors": {
+      "job_container": ".job-item",
+      "title": ".job-title",
+      "location": ".job-location",
+      "description": ".job-description"
+    },
+    "rate_limit": 1.5
+  },
+  {
+    "name": "Apple",
+    "career_url": "https://jobs.apple.com/en-us/search",
+    "base_url": "https://jobs.apple.com",
+    "selectors": {
+      "job_container": ".table--advanced-search tbody tr",
+      "title": ".table-col-1 a",
+      "location": ".table-col-2",
+      "description": ".table-col-1"
+    },
+    "rate_limit": 2.5
+  },
+  {
+    "name": "Meta",
+    "career_url": "https://www.metacareers.com/jobs/",
+    "base_url": "https://www.metacareers.com",
+    "selectors": {
+      "job_container": "._8uzz",
+      "title": "._8v74",
+      "location": "._8v75",
+      "description": "._8v76"
+    },
+    "rate_limit": 2.0
+  },
+  {
+    "name": "Amazon",
+    "career_url": "https://www.amazon.jobs/en/search",
+    "base_url": "https://www.amazon.jobs",
+    "selectors": {
+      "job_container": ".job-tile",
+      "title": ".job-title",
+      "location": ".location-and-id",
+      "description": ".job-description"
+    },
+    "rate_limit": 1.8
+  },
+  {
+    "name": "Netflix",
+    "career_url": "https://jobs.netflix.com/search",
+    "base_url": "https://jobs.netflix.com",
+    "selectors": {
+      "job_container": ".search-result",
+      "title": ".search-result-title",
+      "location": ".search-result-location",
+      "description": ".search-result-snippet"
+    },
+    "rate_limit": 3.0
+  },
+  {
+    "name": "Tesla",
+    "career_url": "https://www.tesla.com/careers/search/",
+    "base_url": "https://www.tesla.com",
+    "selectors": {
+      "job_container": ".tds-table-row",
+      "title": ".tds-text",
+      "location": ".tds-text",
+      "description": ".tds-text"
+    },
+    "rate_limit": 2.2
+  },
+  {
+    "name": "Salesforce",
+    "career_url": "https://careers.salesforce.com/en/jobs/",
+    "base_url": "https://careers.salesforce.com",
+    "selectors": {
+      "job_container": ".job-result-card",
+      "title": ".job-result-card__title",
+      "location": ".job-result-card__location",
+      "description": ".job-result-card__snippet"
+    },
+    "rate_limit": 2.0
+  },
+  {
+    "name": "Adobe",
+    "career_url": "https://careers.adobe.com/us/en/search-results",
+    "base_url": "https://careers.adobe.com",
+    "selectors": {
+      "job_container": ".job-list-item",
+      "title": ".job-list-item__title",
+      "location": ".job-list-item__location",
+      "description": ".job-list-item__description"
+    },
+    "rate_limit": 2.1
+  },
+  {
+    "name": "Spotify",
+    "career_url": "https://lifeatspotify.com/jobs",
+    "base_url": "https://lifeatspotify.com",
+    "selectors": {
+      "job_container": ".job-posting",
+      "title": ".job-posting__title",
+      "location": ".job-posting__location",
+      "description": ".job-posting__description"
+    },
+    "rate_limit": 2.3
+  }
+]

@@ -1,0 +1,22 @@
+# Core scraping dependencies
+aiohttp==3.8.5
+beautifulsoup4==4.12.2
+requests==2.31.0
+
+# Scheduling and automation
+schedule==1.2.0
+
+# User agent rotation and utilities
+fake-useragent==1.4.0
+python-dotenv==1.0.0
+
+# Optional: For JavaScript-heavy sites
+selenium==4.15.0
+
+# Optional: For distributed processing
+celery==5.3.0
+redis==5.0.0
+
+# Optional: Database alternatives
+psycopg2-binary==2.9.7
+sqlalchemy==2.0.21

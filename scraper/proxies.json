@@ -1,0 +1,19 @@
+[
+  {
+    "host": "proxy1.example.com",
+    "port": 8080,
+    "protocol": "http"
+  },
+  {
+    "host": "proxy2.example.com",
+    "port": 8080,
+    "username": "user",
+    "password": "pass",
+    "protocol": "http"
+  },
+  {
+    "host": "socks5-proxy.example.com",
+    "port": 1080,
+    "protocol": "socks5"
+  }
+]

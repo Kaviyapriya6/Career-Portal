@@ -1,0 +1,31 @@
+[
+  {
+    "id": "ace7a60f-80c4-491b-ab61-fb14d77c23a8",
+    "title": "Senior Software Engineer",
+    "company": "Google",
+    "companySlug": "google",
+    "location": "Mountain View, CA",
+    "department": "Engineering",
+    "type": "Full-time",
+    "level": "Mid-level",
+    "description": "Work on cutting-edge technology...",
+    "requirements": "BS/MS in Computer Science, 5+ years experience...",
+    "benefits": [
+      "Competitive salary",
+      "Health insurance",
+      "Remote work options"
+    ],
+    "skills": [
+      "General"
+    ],
+    "salary": {
+      "min": 80000,
+      "max": 150000,
+      "currency": "USD"
+    },
+    "applicationUrl": "https://careers.google.com/jobs/123",
+    "postedDate": "2025-08-06T05:55:22.056333",
+    "externalId": "test_123",
+    "sourceUrl": "https://careers.google.com"
+  }
+]

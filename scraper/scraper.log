@@ -1,0 +1,5 @@
+2025-08-06 05:55:22,056 - __main__ - INFO - Found company data from main project
+2025-08-06 05:55:22,056 - __main__ - INFO - 🧪 Running in test mode
+2025-08-06 05:55:22,056 - __main__ - INFO - ✅ Transformed and saved 1 jobs to jobs_for_import_20250806_055522.json
+2025-08-06 05:55:22,056 - __main__ - INFO - 📄 You can import this file into your PostgreSQL database
+2025-08-06 05:55:22,056 - __main__ - INFO - 📄 Generated SQL insert statements in jobs_import_20250806_055522.sql
